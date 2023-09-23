@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Description: NER Spacy Drugs
+
+Globals:
+  Function:
+    Timeout: 900
+    Handler: app.lambda_handler
+    Runtime: python3.8
+    Environment:
+
+Resources:
+  NerDrugsAPI:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: nonprod
+
+
+  LibLayerSpacy:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: src/libSpacy
+      CompatibleRuntimes:
+        - python3.8
+    Metadata:
+      BuildMethod: python3.8
+
+  NERExecutionFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: src/
+      Layers:
+        - !Ref LibLayerSpacy
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Timeout: 900
+      MemorySize: 256
+      Policies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: '*'
+      Environment:
+        Variables:
+          IFX_LOGGING_ENABLE: false
+      Events:
+        GetPredictions:
+          Type: HttpApi 
+          Properties:
+            Path: /ner_drugs
+            Method: post
+            ApiId:
+              Ref: NerDrugsAPI

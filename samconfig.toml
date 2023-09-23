@@ -1,0 +1,18 @@
+version = 0.1
+
+[ner-drugs]
+[ner-drugs.deploy]
+[ner-drugs.deploy.parameters]
+stack_name = "NER-Spacy-Drugs"
+s3_bucket = "ner-spacy-drugs-dev"
+s3_prefix = "dev"
+region = "us-east-1"
+profile = "ner-drugs"
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides=[
+    "NamePrefix=BPAC-DEV",
+    "Environment=dev",
+    "TableToBeProcessedARN=arn:aws:dynamodb:us-east-1:766187213257:table/BPAC-DEV-queue-group-metrics-historic-dev",
+    "DefaultValuesMapping='{\"ABANDON_TIME_SECONDS_AVG\":{\"Value\":\"0\",\"Type\":\"Double\"},\"AFTER_CONTACT_WORK_TIME_SECONDS_AVG\":{\"Value\":\"0\",\"Type\":\"Double\"},\"CONTACTS_ABANDONED_COUNT_SUM\":{\"Value\":\"0\",\"Type\":\"Double\"}}'",
+    "TableResetSchedule='cron(* 4 * * ? *)'"
+  ]
