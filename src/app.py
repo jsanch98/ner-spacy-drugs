@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import spacy
 
 LOGGER = logging.getLogger()
@@ -8,8 +7,7 @@ LOGGER.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     text = json.loads(event['body'])['text']
-    print(event)
-    print(text)
+    LOGGER.info(f'Going to process text {text}')
     trained_nlp = spacy.load("./model-best")
     
     doc = trained_nlp(text)
@@ -21,5 +19,7 @@ def lambda_handler(event, context):
         )
     unique_entities = list(set(entities))
     result = list(map(lambda ent: {'entity': ent, 'label': 'DRUG'}, unique_entities))
+
+    LOGGER.info(f'result {result}')
 
     return json.dumps({'response': result})
