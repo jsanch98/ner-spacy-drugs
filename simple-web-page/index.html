@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Envío de Texto</title>
+</head>
+
+<body>
+    <h1>Introduzca el texto que quiere procesar (debe estar en inglés)</h1>
+    <div>
+        <textarea id="inputText" placeholder="Escribe aquí..." rows="4" cols="50"></textarea>
+    </div>
+    <div>
+        <button onclick="enviarTexto()">Enviar</button>
+    </div>
+    <div>
+        <h2>Entidades identificadas:</h2>
+        <textarea id="respuestaAPI" rows="4" cols="50" readonly></textarea>
+    </div>
+
+    <script>
+        function enviarTexto() {
+            const texto = document.getElementById("inputText").value;
+            const apiUrl = "https://ltaliqx59d.execute-api.us-east-1.amazonaws.com/nonprod/ner_drugs";
+            document.getElementById("inputText").value = ""; 
+            fetch(apiUrl, {
+                method: "POST",
+                body: JSON.stringify({ text: texto }),
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Accept": "*/*",
+                    "cross-origin-resource-policy": "cross-origin",
+                    "sec-fetch-mode": "cors",
+                    "sec-fetch-site": "cross-site"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("respuestaAPI").value = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error("Error al llamar a la API:", error);
+                });
+        }
+    </script>
+</body>
+
+</html>

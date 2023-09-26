@@ -15,7 +15,13 @@ Resources:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageName: nonprod
-
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - '*'
+        AllowHeaders:
+          - '*' 
 
   LibLayerSpacy:
     Type: AWS::Serverless::LayerVersion
